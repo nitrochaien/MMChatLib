@@ -1,0 +1,79 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)
+// swift-module-flags: -target arm64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name MMChatLib
+import Combine
+import Foundation
+@_exported import MMChatLib
+import Swift
+import SystemConfiguration
+import UIKit
+import _Concurrency
+public enum MMEvent : Swift.String {
+  case hello
+  case statusChange
+  case posted
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct AuthEvent : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MessageEvent : Swift.Decodable, MMChatLib.EventModel {
+  public var event: Swift.String?
+  public var broadcast: MMChatLib.EventBroadcast?
+  public var seq: Swift.Int?
+  public var message: Swift.String? {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Post : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct HelloEvent : Swift.Decodable, MMChatLib.EventModel {
+  public var event: Swift.String?
+  public var broadcast: MMChatLib.EventBroadcast?
+  public var seq: Swift.Int?
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ChannelViewEvent : Swift.Decodable, MMChatLib.EventModel {
+  public var event: Swift.String?
+  public var broadcast: MMChatLib.EventBroadcast?
+  public var seq: Swift.Int?
+  public init(from decoder: Swift.Decoder) throws
+}
+public protocol MMSessionDelegate : ObjectiveC.NSObjectProtocol {
+  func mmSession(_ session: MMChatLib.MMSession, didOccurError error: Swift.Error)
+  func mmSession(_ session: MMChatLib.MMSession, didCreateChannel id: Swift.String)
+  func mmSession(_ session: MMChatLib.MMSession, onEvent event: MMChatLib.MMSocketEvent)
+}
+@objc public class MMSession : ObjectiveC.NSObject {
+  weak public var delegate: MMChatLib.MMSessionDelegate?
+  @objc deinit
+  public init(token: Swift.String, userId: Swift.String, domain: Swift.String)
+  public func start(between userIds: [Swift.String])
+  public func terminate()
+  public func getPreviewURLString(from id: Swift.String?, placeholder: Swift.String = "") -> Swift.String
+}
+public typealias MMSocketEvent = (event: MMChatLib.MMEvent, response: MMChatLib.EventModel)
+public protocol EventModel {
+  var event: Swift.String? { get set }
+  var broadcast: MMChatLib.EventBroadcast? { get set }
+  var seq: Swift.Int? { get set }
+}
+public struct EventBroadcast : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+extension MMChatLib.MMSession {
+  public func sendTypingNoti()
+  public func send(_ message: Swift.String)
+  public func send(_ message: Swift.String, imagesData: [Foundation.Data], progress: ((Swift.Int, Swift.Double) -> Swift.Void)? = nil, completion: (() -> Swift.Void)? = nil)
+  public func getMessages(page: Swift.Int, perPage: Swift.Int, completion: @escaping ([MMChatLib.Post]?) -> Swift.Void)
+  public func getUnreadCount(of userId: Swift.String, completion: @escaping (Swift.Int?) -> Swift.Void)
+}
+extension MMChatLib.MMEvent : Swift.Equatable {}
+extension MMChatLib.MMEvent : Swift.Hashable {}
+extension MMChatLib.MMEvent : Swift.RawRepresentable {}

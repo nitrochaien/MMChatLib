@@ -1,0 +1,11 @@
+framework module MMChatLib {
+  umbrella header "MMChatLib.h"
+
+  export *
+  module * { export * }
+}
+
+module MMChatLib.Swift {
+    header "MMChatLib-Swift.h"
+    requires objc
+}
